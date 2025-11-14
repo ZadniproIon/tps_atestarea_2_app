@@ -6,6 +6,7 @@ import 'screens/add_expense_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/expenses_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/add_vehicle_screen.dart';
 import 'screens/vehicles_screen.dart';
 
 void main() {
@@ -30,20 +31,53 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final lightScheme = ColorScheme.fromSeed(seedColor: Colors.teal);
+    final darkScheme = ColorScheme.fromSeed(
+      seedColor: Colors.teal,
+      brightness: Brightness.dark,
+    );
+
     return MaterialApp(
       title: 'Smart Car Expenses',
       debugShowCheckedModeBanner: false,
       themeMode: _themeMode,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+        colorScheme: lightScheme,
         useMaterial3: true,
+        scaffoldBackgroundColor: lightScheme.surface,
+        appBarTheme: AppBarTheme(
+          backgroundColor: lightScheme.surface,
+          foregroundColor: lightScheme.onSurface,
+          elevation: 0,
+        ),
+        navigationBarTheme: NavigationBarThemeData(
+          indicatorColor: lightScheme.primaryContainer,
+          surfaceTintColor: Colors.transparent,
+        ),
+        inputDecorationTheme: const InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+        ),
       ),
       darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.teal,
-          brightness: Brightness.dark,
-        ),
+        colorScheme: darkScheme,
         useMaterial3: true,
+        scaffoldBackgroundColor: darkScheme.surface,
+        appBarTheme: AppBarTheme(
+          backgroundColor: darkScheme.surface,
+          foregroundColor: darkScheme.onSurface,
+          elevation: 0,
+        ),
+        navigationBarTheme: NavigationBarThemeData(
+          indicatorColor: darkScheme.primaryContainer,
+          surfaceTintColor: Colors.transparent,
+        ),
+        inputDecorationTheme: const InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+        ),
       ),
       home: HomeShell(
         isDarkMode: _themeMode == ThemeMode.dark,
@@ -87,6 +121,12 @@ class _HomeShellState extends State<HomeShell> {
     });
   }
 
+  void _addVehicle(Vehicle vehicle) {
+    setState(() {
+      _vehicles.add(vehicle);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final pages = <Widget>[
@@ -107,6 +147,39 @@ class _HomeShellState extends State<HomeShell> {
         onThemeChanged: widget.onThemeChanged,
       ),
     ];
+
+    Widget? fab;
+    if (_selectedIndex == 0 || _selectedIndex == 1) {
+      fab = FloatingActionButton.extended(
+        onPressed: () async {
+          final newExpense = await Navigator.of(context).push<CarExpense>(
+            MaterialPageRoute(
+              builder: (context) => AddExpenseScreen(vehicles: _vehicles),
+            ),
+          );
+          if (newExpense != null) {
+            _addExpense(newExpense);
+          }
+        },
+        label: const Text('Add expense'),
+        icon: const Icon(Icons.add),
+      );
+    } else if (_selectedIndex == 2) {
+      fab = FloatingActionButton.extended(
+        onPressed: () async {
+          final newVehicle = await Navigator.of(context).push<Vehicle>(
+            MaterialPageRoute(
+              builder: (context) => const AddVehicleScreen(),
+            ),
+          );
+          if (newVehicle != null) {
+            _addVehicle(newVehicle);
+          }
+        },
+        label: const Text('Add vehicle'),
+        icon: const Icon(Icons.directions_car),
+      );
+    }
 
     return Scaffold(
       body: SafeArea(
@@ -143,20 +216,7 @@ class _HomeShellState extends State<HomeShell> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          final newExpense = await Navigator.of(context).push<CarExpense>(
-            MaterialPageRoute(
-              builder: (context) => AddExpenseScreen(vehicles: _vehicles),
-            ),
-          );
-          if (newExpense != null) {
-            _addExpense(newExpense);
-          }
-        },
-        label: const Text('Add expense'),
-        icon: const Icon(Icons.add),
-      ),
+      floatingActionButton: fab,
     );
   }
 }

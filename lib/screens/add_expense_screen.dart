@@ -119,7 +119,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<ExpenseCategory>(
-                value: _category,
+                initialValue: _category,
                 decoration: const InputDecoration(
                   labelText: 'Category',
                   border: OutlineInputBorder(),
@@ -140,7 +140,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<Vehicle>(
-                value: _selectedVehicle,
+                initialValue: _selectedVehicle,
                 decoration: const InputDecoration(
                   labelText: 'Vehicle',
                   border: OutlineInputBorder(),

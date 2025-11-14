@@ -21,7 +21,7 @@ class SummaryCard extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Card(
       elevation: 0,
-      color: color ?? scheme.surfaceVariant,
+      color: color ?? scheme.surfaceContainerHighest,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
