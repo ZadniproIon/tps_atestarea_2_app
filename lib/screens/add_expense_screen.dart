@@ -55,7 +55,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             padding: const EdgeInsets.all(16),
             children: [
               Text(
-                'Smart input (fake AI)',
+                'Smart input',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
@@ -64,15 +64,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 maxLines: 3,
                 decoration: const InputDecoration(
                   hintText:
-                      'Example: am cheltuit 300 lei pe benzină pentru Golf',
-                  border: OutlineInputBorder(),
+                      'Example: am cheltuit 300 lei pe benzină pentru Passat',
                 ),
               ),
               const SizedBox(height: 8),
               Row(
                 children: [
                   ElevatedButton.icon(
-                    onPressed: _applyFakeAi,
+                    onPressed: _applySmartParser,
                     icon: const Icon(Icons.bolt_outlined),
                     label: const Text('Pre-fill fields'),
                   ),
@@ -81,12 +80,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Voice input coming soon 🎙️ (demo)'),
+                          content: Text(
+                            'Voice input is not configured in this demo build.',
+                          ),
                         ),
                       );
                     },
                     icon: const Icon(Icons.mic_none_outlined),
-                    label: const Text('Voice (coming soon)'),
+                    label: const Text('Voice input'),
                   ),
                 ],
               ),
@@ -103,7 +104,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Amount (lei)',
                   prefixText: 'lei ',
-                  border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -122,7 +122,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 initialValue: _category,
                 decoration: const InputDecoration(
                   labelText: 'Category',
-                  border: OutlineInputBorder(),
                 ),
                 items: ExpenseCategory.values
                     .map(
@@ -143,7 +142,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 initialValue: _selectedVehicle,
                 decoration: const InputDecoration(
                   labelText: 'Vehicle',
-                  border: OutlineInputBorder(),
                 ),
                 items: widget.vehicles
                     .map(
@@ -162,7 +160,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 controller: _descriptionController,
                 decoration: const InputDecoration(
                   labelText: 'Description',
-                  border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 12),
@@ -170,12 +167,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 controller: _mileageController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: 'Mileage (km)',
-                  border: OutlineInputBorder(),
+                  labelText: 'Mileage (km, optional)',
+                  helperText:
+                      'If empty, the current mileage of the vehicle is used.',
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter mileage';
+                    return null;
                   }
                   final parsed = int.tryParse(value);
                   if (parsed == null || parsed <= 0) {
@@ -191,7 +189,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 child: InputDecorator(
                   decoration: const InputDecoration(
                     labelText: 'Date',
-                    border: OutlineInputBorder(),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -228,7 +225,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     }
   }
 
-  void _applyFakeAi() {
+  void _applySmartParser() {
     final text = _aiInputController.text.toLowerCase();
     if (text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -237,7 +234,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       return;
     }
 
-    // Extract amount like "300" or "300.50"
+    // Extract amount like "300" or "300.50".
     final amountMatch = RegExp(r'(\d+[.,]?\d*)').firstMatch(text);
     if (amountMatch != null) {
       final raw = amountMatch.group(0)!.replaceAll(',', '.');
@@ -294,7 +291,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Fields pre-filled using a fake AI parser (local only).'),
+        content: Text('Fields pre-filled using a smart local parser.'),
       ),
     );
   }
@@ -313,7 +310,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     final amount = double.parse(
       _amountController.text.replaceAll(',', '.').trim(),
     );
-    final mileage = int.parse(_mileageController.text);
+
+    int mileage;
+    if (_mileageController.text.trim().isEmpty) {
+      mileage = _selectedVehicle!.mileage;
+    } else {
+      mileage = int.parse(_mileageController.text.trim());
+    }
 
     final newExpense = CarExpense(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -336,3 +339,4 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         '${date.year}';
   }
 }
+

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-class ProfileScreen extends StatelessWidget {
+import '../services/notification_service.dart';
+
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({
     super.key,
     required this.isDarkMode,
@@ -9,6 +11,15 @@ class ProfileScreen extends StatelessWidget {
 
   final bool isDarkMode;
   final ValueChanged<bool> onThemeChanged;
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool _notificationsEnabled = true;
+  bool _maintenanceRemindersEnabled = true;
+  bool _privacyMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +61,8 @@ class ProfileScreen extends StatelessWidget {
             child: SwitchListTile(
               title: const Text('Dark mode'),
               subtitle: const Text('Toggle a simple light / dark theme'),
-              value: isDarkMode,
-              onChanged: onThemeChanged,
+              value: widget.isDarkMode,
+              onChanged: widget.onThemeChanged,
               secondary: const Icon(Icons.dark_mode_outlined),
             ),
           ),
@@ -60,32 +71,75 @@ class ProfileScreen extends StatelessWidget {
             elevation: 0,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Future AI assistant (concept)',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'This screen describes how a future AI/NLP assistant could '
-                    'help you log expenses, understand spending patterns, and '
-                    'suggest maintenance.\n\n'
-                    '- Understand messages like “am cheltuit 300 lei pe benzină pentru Golf”.\n'
-                    '- Auto-fill forms with amount, category, and vehicle.\n'
-                    '- Detect recurring expenses and remind you in advance.\n'
-                    '- Work fully on-device for privacy.',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
+            child: Column(
+              children: [
+                SwitchListTile(
+                  title: const Text('Notifications'),
+                  subtitle: const Text('Enable push notifications for expenses'),
+                  value: _notificationsEnabled,
+                  onChanged: (value) {
+                    setState(() {
+                      _notificationsEnabled = value;
+                    });
+                  },
+                  secondary: const Icon(Icons.notifications_outlined),
+                ),
+                const Divider(height: 0),
+                SwitchListTile(
+                  title: const Text('Maintenance reminders'),
+                  subtitle:
+                      const Text('Remind me about oil, ITP and inspections'),
+                  value: _maintenanceRemindersEnabled,
+                  onChanged: (value) {
+                    setState(() {
+                      _maintenanceRemindersEnabled = value;
+                    });
+                  },
+                  secondary: const Icon(Icons.build_circle_outlined),
+                ),
+                const Divider(height: 0),
+                SwitchListTile(
+                  title: const Text('Privacy mode'),
+                  subtitle: const Text('Hide amounts on screenshots'),
+                  value: _privacyMode,
+                  onChanged: (value) {
+                    setState(() {
+                      _privacyMode = value;
+                    });
+                  },
+                  secondary: const Icon(Icons.privacy_tip_outlined),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Card(
+            elevation: 0,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: const Text('About this demo'),
+              subtitle: const Text('Smart car expenses · Local data only'),
+              trailing: Text(
+                'v0.1',
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
+          ),
+          const SizedBox(height: 16),
+          FilledButton.icon(
+            onPressed: _simulateNotifications,
+            icon: const Icon(Icons.notifications_active_outlined),
+            label: const Text('Simulate notifications'),
           ),
         ],
       ),
     );
   }
+
+  void _simulateNotifications() {
+    NotificationService.showDemoNotifications(context);
+  }
 }
+

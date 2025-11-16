@@ -8,8 +8,11 @@ import 'screens/expenses_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/add_vehicle_screen.dart';
 import 'screens/vehicles_screen.dart';
+import 'services/notification_service.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.init();
   runApp(const MyApp());
 }
 
@@ -141,6 +144,8 @@ class _HomeShellState extends State<HomeShell> {
       ),
       VehiclesScreen(
         vehicles: _vehicles,
+        expenses: _expenses,
+        reminders: _reminders,
       ),
       ProfileScreen(
         isDarkMode: widget.isDarkMode,

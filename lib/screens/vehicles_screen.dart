@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 
 import '../models.dart';
+import 'vehicle_detail_screen.dart';
 
 class VehiclesScreen extends StatelessWidget {
   const VehiclesScreen({
     super.key,
     required this.vehicles,
+    required this.expenses,
+    required this.reminders,
   });
 
   final List<Vehicle> vehicles;
+  final List<CarExpense> expenses;
+  final List<MaintenanceReminder> reminders;
 
   @override
   Widget build(BuildContext context) {
@@ -21,52 +26,66 @@ class VehiclesScreen extends StatelessWidget {
         itemCount: vehicles.length,
         itemBuilder: (context, index) {
           final vehicle = vehicles[index];
-          return Card(
-            elevation: 0,
-            margin: const EdgeInsets.only(bottom: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.directions_car_filled_outlined),
-                      const SizedBox(width: 8),
-                      Text(
-                        vehicle.displayName,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const Spacer(),
-                      Text(
-                        '${vehicle.mileage} km',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
+          return InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => VehicleDetailScreen(
+                    vehicle: vehicle,
+                    expenses: expenses,
+                    reminders: reminders,
                   ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 4,
-                    children: [
-                      _InfoChip(
-                        label: 'Year ${vehicle.year}',
-                        icon: Icons.calendar_today_outlined,
-                      ),
-                      _InfoChip(
-                        label: vehicle.engine,
-                        icon: Icons.speed,
-                      ),
-                      _InfoChip(
-                        label: 'VIN ${vehicle.vin.substring(0, 8)}...',
-                        icon: Icons.qr_code_2_outlined,
-                      ),
-                    ],
-                  ),
-                ],
+                ),
+              );
+            },
+            child: Card(
+              elevation: 0,
+              margin: const EdgeInsets.only(bottom: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.directions_car_filled_outlined),
+                        const SizedBox(width: 8),
+                        Text(
+                          vehicle.displayName,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const Spacer(),
+                        Text(
+                          '${vehicle.mileage} km',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 4,
+                      children: [
+                        _InfoChip(
+                          label: 'Year ${vehicle.year}',
+                          icon: Icons.calendar_today_outlined,
+                        ),
+                        _InfoChip(
+                          label: vehicle.engine,
+                          icon: Icons.speed,
+                        ),
+                        _InfoChip(
+                          label: 'VIN ${vehicle.vin.substring(0, 8)}...',
+                          icon: Icons.qr_code_2_outlined,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           );
