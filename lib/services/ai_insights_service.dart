@@ -1,4 +1,4 @@
-import 'models.dart';
+import '../models.dart';
 
 class SpendingAnomaly {
   const SpendingAnomaly({
@@ -121,4 +121,3 @@ class AiInsightsService {
 extension _IterableLastOrNull<T> on Iterable<T> {
   T? get lastOrNull => isEmpty ? null : last;
 }
-

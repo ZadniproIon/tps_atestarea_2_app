@@ -1,4 +1,4 @@
-import 'models.dart';
+import '../models.dart';
 
 class ParsedExpenseIntent {
   const ParsedExpenseIntent({
@@ -138,4 +138,3 @@ class NlpExpenseAnalyzer {
     );
   }
 }
-
